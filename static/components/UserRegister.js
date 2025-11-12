@@ -85,12 +85,25 @@ export default {
                       v-model="formData.address"
                     ></textarea>
                   </div>
-                  <div class="col-12">
-                    <label for="phone" class="form-label">Phone No:</label>
+                  <div class="col-12 col-md-6">
+                    <label for="pincode" class="form-label">Pincode</label>
+                    <input
+                      id="pincode"
+                      class="form-control"
+                      placeholder="200001"
+                      type="tel"
+                      pattern="[0-9]{6}"
+                      title="Please enter a 6-digit pincode"
+                      required
+                      v-model="formData.pincode"
+                    >
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="phone" class="form-label">Phone No</label>
                     <input
                       id="phone"
                       class="form-control"
-                      placeholder="phone number"
+                      placeholder="9876543210"
                       type="tel"
                       pattern="[0-9]{10}"
                       title="Please enter a 10-digit phone number"
@@ -129,6 +142,7 @@ export default {
         password2: "",
         name: "",
         address: "",
+        pincode: "",
         phone: "",
       },
       isLoading: false,
@@ -152,6 +166,11 @@ export default {
         return;
       }
 
+      if (!/^\d{6}$/.test(this.formData.pincode)) {
+        this.errorMessage = "Please enter a valid 6-digit pincode";
+        return;
+      }
+
       this.isLoading = true;
       this.errorMessage = "";
 
@@ -167,6 +186,7 @@ export default {
             password2: this.formData.password2,
             name: this.formData.name,
             address: this.formData.address,
+            pincode: this.formData.pincode,
             phone: this.formData.phone
           }),
         });

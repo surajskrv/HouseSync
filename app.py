@@ -1,5 +1,5 @@
 from flask import Flask
-from application.database import db
+from application.extensions import db
 from application.models import User, Role
 from application.config import LocalDevelopmentConfig
 from flask_security import Security, SQLAlchemyUserDatastore
@@ -21,7 +21,10 @@ def start():
 app = start()
 
 from application.create_data import *
-from application.routes import *   
+from application.routes.authRoutes import *   
+from application.routes.userRoutes import * 
+from application.routes.adminRoutes import * 
+from application.routes.profRoutes import * 
 
 if __name__ == '__main__':
     app.run()

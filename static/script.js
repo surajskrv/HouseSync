@@ -37,7 +37,7 @@ const app = new Vue({
   el: "#app",
   router,
   template: `
-    <div class="container-fluid">
+    <div class="container-fluid p-0 m-0">
       <router-view></router-view>
     </div>
   `,
