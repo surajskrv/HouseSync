@@ -74,14 +74,14 @@ export default {
                     >
                   </div>
                   <div class="col-12 col-md-6">
-                    <label for="service" class="form-label">Service Type</label>
+                    <label for="service_type" class="form-label">Service Type</label>
                     <select 
                       class="form-select" 
-                      id="service" 
+                      id="service_type" 
                       required
                       v-model="formData.service_type"
                     >
-                      <option selected disabled value="">Choose any</option>
+                      <option disabled value="">Choose any</option>
                       <option value="plumbing">Plumbing</option>
                       <option value="electrical">Electrical</option>
                       <option value="cleaning">Cleaning</option>
@@ -96,9 +96,21 @@ export default {
                       type="number" 
                       min="0" 
                       required
-                      v-model="formData.experience"
+                      v-model.number="formData.experience"
                     >
                   </div>
+                  <div class="col-12">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input 
+                      id="phone" 
+                      class="form-control" 
+                      placeholder="9876543210" 
+                      type="tel" 
+                      pattern="[0-9]{10}"
+                      title="Please enter a 10-digit phone number"
+                      required
+                      v-model="formData.phone"
+                    >
                   </div>
                   <div class="col-12 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-3">
                     <button 
@@ -131,6 +143,7 @@ export default {
         password2: "",
         name: "",
         experience: 0,
+        phone: "",
         service_type: "",
       },
       isLoading: false,
@@ -140,6 +153,8 @@ export default {
   methods: {
     async addPro() {
       try {
+        this.errorMessage = "";
+
         if (this.formData.password !== this.formData.password2) {
           this.errorMessage = "Passwords do not match";
           return;
@@ -150,20 +165,30 @@ export default {
           return;
         }
 
-        this.isLoading = true;
-        this.errorMessage = "";
+        if (!/^[0-9]{10}$/.test(this.formData.phone)) {
+          this.errorMessage = "Please enter a valid 10-digit phone number";
+          return;
+        }
 
-        const response = await fetch("/api/register", {
+        if (this.formData.service_type === "") {
+          this.errorMessage = "Please select a service type";
+          return;
+        }
+
+        this.isLoading = true;
+
+        const response = await fetch("/api/register/prof", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: this.formData.email,
+            email: this.formData.email.trim(),
             password: this.formData.password,
             password2: this.formData.password2,
-            name: this.formData.name,
-            experience: parseInt(this.formData.experience),
+            name: this.formData.name.trim(),
+            phone: this.formData.phone,
+            experience: Number(this.formData.experience),
             service_type: this.formData.service_type,
           }),
         });
@@ -173,6 +198,7 @@ export default {
         if (!response.ok) {
           throw new Error(data.message || "Registration failed");
         }
+
         if (data.auth_token) {
           localStorage.setItem("auth_token", data.auth_token);
           localStorage.setItem("user_id", data.user_id);

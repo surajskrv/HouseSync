@@ -40,8 +40,8 @@ def login():
     except Exception as e:
         return jsonify({"message": "Problem in Login"}, e), 500
 
-@app.route('/api/register', methods=['POST'])
-def register():
+@app.route('/api/register/customer', methods=['POST'])
+def customer_register():
     try:
         data = request.get_json()
         email = data['email']
@@ -56,7 +56,7 @@ def register():
             return jsonify({"message": "Error in data!"}), 400
         
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            return jsonify({"message": "Enter a valid Email Id"}), 400
+            return jsonify({"message": "Enter a valid Email Id"}), 4000
         
         if not email or not password or not password2 or not name or not address or not pincode:
             return jsonify({"message": "All fields are required"}), 400
@@ -98,7 +98,67 @@ def register():
                             }), 201
 
     except Exception as e:
-        return jsonify({"message": "Error in registration", "error": str(e)}), 500
+        return jsonify({"message": "Error in customer registration", "error": str(e)}), 500
+    
+@app.route('/api/register/prof', methods=['POST'])
+def prof_register():
+    try:
+        data = request.get_json()
+        email = data['email']
+        password = data['password']
+        password2 = data['password2']
+        name = data['name']
+        service_type = data['service_type']
+        experience= data['experience']
+        phone = data['phone']
+        
+        if not data:
+            return jsonify({"message": "Error in data!"}), 400
+        
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            return jsonify({"message": "Enter a valid Email Id"}), 400
+        
+        if not email or not password or not password2 or not name or not experience or not phone or not service_type:
+            return jsonify({"message": "All fields are required"}), 400
+
+        if password != password2:
+            return jsonify({"message": "Passwords don't match"}), 400
+
+        if len(password) < 4:
+            return jsonify({"message": "Password must be at least 5 characters"}), 400
+        
+        if app.security.datastore.find_user(email=email):
+            return jsonify({"message": "Email already registered"}), 409
+
+        else:
+            app.security.datastore.create_user(
+                email=email,
+                password=hash_password(password),
+                roles=['prof']
+            )
+            db.session.commit() 
+            
+            user = app.security.datastore.find_user(email=email)
+            
+            professional_profile = Professional(
+                user_id=user.id,
+                name=name,
+                phone=phone,
+                service_type=service_type,
+                experience=experience
+            )
+            db.session.add(professional_profile)
+            db.session.commit()
+            
+            login_user(user)
+            
+            return jsonify({"message" : "User is created",
+                            "auth_token": user.get_auth_token(),
+                            "user_role": user.roles[0].name,
+                            }), 201
+
+    except Exception as e:
+        return jsonify({"message": "Error in prof registration", "error": str(e)}), 500
     
 @app.route('/api/logout', methods=['POST'])
 @auth_required('token')

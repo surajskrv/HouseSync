@@ -175,7 +175,7 @@ export default {
       this.errorMessage = "";
 
       try {
-        const response = await fetch("/api/register", {
+        const response = await fetch("/api/register/customer", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

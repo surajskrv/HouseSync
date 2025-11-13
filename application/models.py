@@ -39,6 +39,8 @@ class Customer(db.Model):
 class Professional(db.Model):
     __tablename__ = 'professionals'
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    name= db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(50), nullable=False)
     experience = db.Column(db.Integer, nullable=False)
     service_type = db.Column(db.String(255), nullable=False)
     is_verified = db.Column(db.Boolean, default=False)
