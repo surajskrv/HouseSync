@@ -190,53 +190,57 @@ python app.py
 
 ## 📁 Folder Structure
 
-/
+```bash
+
+HouseSync/
 ├── .gitignore
 ├── app.py
 ├── README.md
 ├── requirements.txt
 │
 ├── application/
-│ ├── config.py
-│ ├── create_data.py
-│ ├── extensions.py
-│ ├── models.py
-│ └── routes/
-│   ├── adminRoutes.py
-│   ├── authRoutes.py
-│   ├── profRoutes.py
-│   └── userRoutes.py
+│   ├── config.py
+│   ├── create_data.py
+│   ├── extensions.py
+│   ├── models.py
+│   └── routes/
+│     ├── adminRoutes.py
+│     ├── authRoutes.py
+│     ├── profRoutes.py
+│     └── userRoutes.py
 │
 ├── instance/
-│ └── housesync.db
+│     └── housesync.db
 │
 ├── static/
-│ ├── script.js
-│ ├── components/
-│ │ ├── AdminDashboard.js
-│ │ ├── AdminSearch.js
-│ │ ├── AdminSummary.js
-│ │ ├── Home.js
-│ │ ├── Login.js
-│ │ ├── ProDashboard.js
-│ │ ├── ProRegister.js
-│ │ ├── ProSearch.js
-│ │ ├── ProSummary.js
-│ │ ├── UserDashboard.js
-│ │ ├── UserRegister.js
-│ │ ├── UserSearch.js
-│ │ └── UserSummary.js
-│ │
-│ ├── css/
-│ │ ├── home.css
-│ │ ├── nav.css
-│ │ └── password.css
-│ │
-│ └── img/
-│ ├── error.png
-│ ├── eye-close.png
-│ ├── eye-open.png
-│ └── favicon.ico
+│   ├── script.js
+│   ├── components/
+│   │   ├── AdminDashboard.js
+│   │   ├── AdminSearch.js
+│   │   ├── AdminSummary.js
+│   │   ├── Home.js
+│   │   ├── Login.js
+│   │   ├── ProDashboard.js
+│   │   ├── ProRegister.js
+│   │   ├── ProSearch.js
+│   │   ├── ProSummary.js
+│   │   ├── UserDashboard.js
+│   │   ├── UserRegister.js
+│   │   ├── UserSearch.js
+│   │   └── UserSummary.js
+│   │
+│   ├── css/
+│   │   ├── home.css
+│   │   ├── nav.css
+│   │   └── password.css
+│   │
+│   └── img/
+│       ├── error.png
+│       ├── eye-close.png
+│       ├── eye-open.png
+│       └── favicon.ico
 │
 └── templates/
-  └── index.html
+    └── index.html
+  
+```
