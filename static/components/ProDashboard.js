@@ -1,275 +1,291 @@
 export default {
   template: `
-  <div class="professional-dashboard container-fluid vh-100 d-flex flex-column bg-light">
-    <!-- Professional Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm py-2">
+  <div class="pro-dashboard container-fluid min-vh-100 d-flex flex-column bg-light font-sans">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top shadow-sm border-bottom border-success-subtle">
       <div class="container">
-        <router-link class="navbar-brand d-flex align-items-center" to="/professional">
-          <i class="bi bi-tools me-2 fs-4"></i>
-          <span class="fw-bold fs-4">HouseSync Pro</span>
+        <router-link class="navbar-brand d-flex align-items-center gap-2" to="/pro_dashboard">
+          <i class="bi bi-tools fs-4 text-white"></i>
+          <span class="fw-bold fs-4 tracking-tight">Pro Portal</span>
         </router-link>
-        
-        <!-- Right-side Navigation -->
-        <div class="d-flex align-items-center ms-auto">
-          <!-- Search Bar -->
-          <div class="input-group me-3" style="width: 250px;">
-            <input type="text" class="form-control" placeholder="Search requests...">
-            <button class="btn btn-light" type="button">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-          
-          <!-- Professional Dropdown -->
-          <div class="dropdown me-3">
-            <button class="btn btn-light dropdown-toggle" type="button" id="proDropdown" data-bs-toggle="dropdown">
-              <i class="bi bi-person-badge me-1"></i> My Account
-            </button>
-            <ul class="dropdown-menu">
-              <li><router-link class="dropdown-item" to="/professional/profile">Profile</router-link></li>
-              <li><router-link class="dropdown-item" to="/professional/settings">Settings</router-link></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" @click="logout">Logout</a></li>
-            </ul>
-          </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#proNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="proNav">
+          <ul class="navbar-nav ms-auto align-items-center gap-3">
+            <li class="nav-item">
+              <router-link to="/pro_dashboard" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/pro_search" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-search me-1"></i> Search Jobs
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/pro_summary" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-person-circle me-1"></i> Profile
+              </router-link>
+            </li>
+            <li class="nav-item ms-lg-2">
+              <button class="btn btn-outline-light btn-sm rounded-pill px-4 fw-semibold" @click="logout">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-5 pt-4">
-      <!-- Available Jobs Section -->
-      <div class="card shadow-lg mb-4">
-        <div class="card-header bg-white">
-          <h5 class="mb-0">Available Service Requests</h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div v-for="request in availableRequests" :key="request.id" class="col-md-4 mb-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h5 class="card-title">{{ request.service }}</h5>
-                  <p class="card-text">{{ request.details }}</p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted">{{ formatDate(request.date) }} at {{ request.time }}</span>
-                    <span class="fw-bold">{{ request.price }}</span>
-                  </div>
-                  <div class="mt-2">
-                    <small class="text-muted">{{ request.address }}</small>
-                  </div>
+    <div class="container py-5 mt-5">
+      
+      <!-- Welcome Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <h4 class="fw-bold text-dark mb-1">Welcome back, {{ profile.name || 'Professional' }}!</h4>
+                <p class="text-muted mb-0">
+                  <span class="badge bg-success bg-opacity-10 text-success me-2">{{ profile.service_type }} Expert</span>
+                  <span v-if="profile.is_verified" class="badge bg-primary bg-opacity-10 text-primary"><i class="bi bi-patch-check-fill me-1"></i>Verified</span>
+                  <span v-else class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending Verification</span>
+                </p>
+              </div>
+              <div class="d-flex gap-3 text-center">
+                <div class="px-3 border-end">
+                  <h3 class="fw-bold text-success mb-0">{{ myJobs.filter(j => j.status === 'assigned').length }}</h3>
+                  <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Active</small>
                 </div>
-                <div class="card-footer bg-white border-top-0">
-                  <button class="btn btn-primary w-100" @click="acceptRequest(request.id)">
-                    <i class="bi bi-check-circle me-1"></i> Accept Request
+                <div class="px-3">
+                  <h3 class="fw-bold text-dark mb-0">{{ myJobs.filter(j => j.status === 'closed').length }}</h3>
+                  <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Completed</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        
+        <!-- Available Jobs Column -->
+        <div class="col-lg-6">
+          <div class="card border-0 shadow h-100">
+            <div class="card-header bg-white border-0 p-4 sticky-top z-1">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                  <i class="bi bi-briefcase-fill"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-0">New Opportunities</h5>
+                  <small class="text-muted">Jobs matching your skills</small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0 overflow-auto custom-scrollbar" style="max-height: 600px;">
+              
+              <div v-if="!profile.is_verified" class="p-5 text-center">
+                <i class="bi bi-shield-lock fs-1 text-muted d-block mb-3"></i>
+                <h6 class="text-muted">Account Under Review</h6>
+                <p class="small text-muted">You can accept jobs once an admin verifies your profile.</p>
+              </div>
+
+              <div v-else-if="availableRequests.length === 0" class="p-5 text-center">
+                <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+                <h6 class="text-muted">No New Jobs</h6>
+                <p class="small text-muted">Check back later for new requests in your area.</p>
+              </div>
+
+              <div v-else class="list-group list-group-flush">
+                <div v-for="req in availableRequests" :key="req.id" class="list-group-item p-4 border-bottom hover-bg-light transition-all">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <span class="badge bg-light text-dark border"><i class="bi bi-geo-alt me-1"></i>{{ req.pincode }}</span>
+                    <small class="text-muted">{{ formatDate(req.date_of_request) }}</small>
+                  </div>
+                  <h5 class="fw-bold text-dark mb-2">{{ req.service_name }}</h5>
+                  <p class="text-secondary small mb-3"><i class="bi bi-person me-1"></i>{{ req.customer_name }} • {{ req.address }}</p>
+                  <p v-if="req.remarks" class="alert alert-light border small py-2 mb-3">
+                    <i class="bi bi-info-circle me-1"></i> {{ req.remarks }}
+                  </p>
+                  <button class="btn btn-success w-100 rounded-pill fw-semibold shadow-sm" @click="acceptRequest(req.id)">
+                    Accept Job
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- My Jobs Section -->
-      <div class="card shadow-lg mb-4">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">My Service Assignments</h5>
-          <router-link to="/professional/jobs" class="btn btn-outline-primary">
-            View All Jobs
-          </router-link>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Request ID</th>
-                  <th>Service</th>
-                  <th>Client</th>
-                  <th>Scheduled Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="job in myJobs" :key="job.id">
-                  <td>{{ job.id }}</td>
-                  <td>{{ job.service }}</td>
-                  <td>{{ job.client }}</td>
-                  <td>{{ formatDate(job.date) }} at {{ job.time }}</td>
-                  <td>
-                    <span :class="'badge bg-' + getStatusColor(job.status)">
-                      {{ job.status }}
+        <!-- My Active Jobs Column -->
+        <div class="col-lg-6">
+          <div class="card border-0 shadow h-100">
+            <div class="card-header bg-white border-0 p-4 sticky-top z-1">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                  <i class="bi bi-calendar-check-fill"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-0">My Schedule</h5>
+                  <small class="text-muted">Manage your assigned tasks</small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0 overflow-auto custom-scrollbar" style="max-height: 600px;">
+              
+              <div v-if="myJobs.length === 0" class="p-5 text-center">
+                <i class="bi bi-calendar-x fs-1 text-muted d-block mb-3"></i>
+                <h6 class="text-muted">No Active Jobs</h6>
+                <p class="small text-muted">Accept a new opportunity to get started.</p>
+              </div>
+
+              <div v-else class="list-group list-group-flush">
+                <div v-for="job in myJobs" :key="job.id" class="list-group-item p-4 border-bottom">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="badge rounded-pill" 
+                          :class="job.status === 'closed' ? 'bg-secondary' : 'bg-primary'">
+                      {{ job.status === 'closed' ? 'Completed' : 'In Progress' }}
                     </span>
-                  </td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-primary me-1" @click="viewJobDetails(job.id)">
-                      <i class="bi bi-eye"></i>
-                    </button>
-                    <button 
-                      class="btn btn-sm btn-outline-success" 
-                      @click="updateJobStatus(job.id)"
-                      :disabled="job.status === 'Completed' || job.status === 'Cancelled'"
-                    >
-                      <i class="bi bi-arrow-up-circle"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+                    <small class="text-muted fw-bold">#{{ job.id }}</small>
+                  </div>
+                  
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="bg-light rounded-circle p-2 me-3">
+                      <i class="bi bi-person fs-5 text-secondary"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold mb-0">{{ job.customer_name }}</h6>
+                      <a :href="'tel:' + job.customer_phone" class="text-decoration-none small text-success">
+                        <i class="bi bi-telephone-fill me-1"></i>{{ job.customer_phone }}
+                      </a>
+                    </div>
+                  </div>
 
-    <!-- Job Details Modal -->
-    <div class="modal fade" id="jobDetailsModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Job Details - {{ selectedJob?.service }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div v-if="selectedJob">
-              <div class="mb-3">
-                <label class="form-label fw-bold">Client:</label>
-                <p>{{ selectedJob.client }}</p>
+                  <div class="mb-3">
+                    <p class="mb-1 small text-muted"><i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ job.address }} - {{ job.pincode }}</p>
+                    <p v-if="job.remarks" class="mb-0 small text-muted fst-italic">"{{ job.remarks }}"</p>
+                  </div>
+
+                  <div v-if="job.status === 'assigned'" class="d-grid gap-2 d-md-flex mt-3">
+                    <button class="btn btn-outline-danger btn-sm flex-grow-1 rounded-pill" @click="rejectRequest(job.id)">
+                      Reject/Cancel
+                    </button>
+                    <button class="btn btn-success btn-sm flex-grow-1 rounded-pill fw-semibold shadow-sm" @click="closeJob(job.id)">
+                      Mark Completed <i class="bi bi-check-lg ms-1"></i>
+                    </button>
+                  </div>
+                  <div v-else class="mt-3 p-2 bg-light rounded text-center small text-muted">
+                    <span v-if="job.rating">Rated: <i class="bi bi-star-fill text-warning"></i> {{ job.rating }}/5</span>
+                    <span v-else>Waiting for customer rating...</span>
+                  </div>
+
+                </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Service Details:</label>
-                <p>{{ selectedJob.details }}</p>
-              </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Scheduled Time:</label>
-                <p>{{ formatDate(selectedJob.date) }} at {{ selectedJob.time }}</p>
-              </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Address:</label>
-                <p>{{ selectedJob.address }}</p>
-              </div>
-              <div class="mb-3">
-                <label class="form-label fw-bold">Status:</label>
-                <select class="form-select" v-model="selectedJob.status" @change="updateJobStatus(selectedJob.id)">
-                  <option value="Assigned">Assigned</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-              </div>
-              <button 
-                class="btn btn-primary w-100 mt-3" 
-                @click="saveJobChanges"
-                :disabled="selectedJob.status === 'Completed'"
-              >
-                Save Changes
-              </button>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
   `,
   data() {
     return {
-      availableRequests: [
-        {
-          id: 2001,
-          service: "Plumbing Repair",
-          details: "Kitchen sink is leaking and needs repair",
-          date: "2023-05-20",
-          time: "10:00",
-          price: "$50",
-          address: "123 Main St, Apt 4B"
-        },
-        {
-          id: 2002,
-          service: "Electrical Work",
-          details: "Install new ceiling light in living room",
-          date: "2023-05-22",
-          time: "14:00",
-          price: "$65",
-          address: "456 Oak Ave"
-        },
-        {
-          id: 2003,
-          service: "Home Cleaning",
-          details: "Deep cleaning for 2 bedroom apartment",
-          date: "2023-05-25",
-          time: "09:00",
-          price: "$80",
-          address: "789 Pine Rd"
-        }
-      ],
-      myJobs: [
-        {
-          id: 1001,
-          service: "Plumbing Repair",
-          client: "Michael Brown",
-          details: "Bathroom faucet replacement",
-          date: "2023-05-15",
-          time: "11:00",
-          address: "321 Elm St",
-          status: "Completed"
-        },
-        {
-          id: 1002,
-          service: "Electrical Work",
-          client: "Sarah Johnson",
-          details: "Outlet installation in home office",
-          date: "2023-05-18",
-          time: "13:30",
-          address: "654 Maple Dr",
-          status: "In Progress"
-        }
-      ],
-      selectedJob: null
-    }
+      profile: {},
+      availableRequests: [],
+      myJobs: []
+    };
+  },
+  mounted() {
+    this.fetchProfile();
+    this.fetchAvailableRequests();
+    this.fetchMyJobs();
   },
   methods: {
-    logout() {
-      this.$router.push('/login');
-    },
-    acceptRequest(requestId) {
-      const request = this.availableRequests.find(r => r.id === requestId);
-      if (request) {
-        this.myJobs.unshift({
-          id: requestId,
-          service: request.service,
-          client: "New Client",
-          details: request.details,
-          date: request.date,
-          time: request.time,
-          address: request.address,
-          status: "Assigned"
+    async fetchWithAuth(url, options = {}) {
+      try {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            "Auth-Token": localStorage.getItem("auth_token"),
+            ...options.headers
+          },
         });
-        this.availableRequests = this.availableRequests.filter(r => r.id !== requestId);
+
+        if (response.status === 401 || response.status === 403) {
+          this.logout();
+          return null;
+        }
+        
+        return response;
+      } catch (err) {
+        console.error("Fetch error:", err);
+        return null;
       }
     },
-    viewJobDetails(jobId) {
-      this.selectedJob = this.myJobs.find(j => j.id === jobId);
-      new bootstrap.Modal(document.getElementById('jobDetailsModal')).show();
-    },
-    updateJobStatus(jobId) {
-      const job = this.myJobs.find(j => j.id === jobId);
-      if (job) {
-        // In a real app, this would update the backend
-        console.log(`Updated job ${jobId} status to ${job.status}`);
+
+    async fetchProfile() {
+      const response = await this.fetchWithAuth('/api/prof/profile');
+      if (response && response.ok) {
+        this.profile = await response.json();
       }
     },
-    saveJobChanges() {
-      bootstrap.Modal.getInstance(document.getElementById('jobDetailsModal')).hide();
-      // In a real app, this would save changes to the backend
+
+    async fetchAvailableRequests() {
+      const response = await this.fetchWithAuth('/api/prof/available_requests');
+      if (response && response.ok) {
+        this.availableRequests = await response.json();
+      }
     },
+
+    async fetchMyJobs() {
+      const response = await this.fetchWithAuth('/api/prof/my_jobs');
+      if (response && response.ok) {
+        this.myJobs = await response.json();
+      }
+    },
+
+    async acceptRequest(id) {
+      if (!confirm('Accept this job?')) return;
+      const response = await this.fetchWithAuth(`/api/prof/request/${id}/accept`, { method: 'POST' });
+      if (response && response.ok) {
+        this.fetchAvailableRequests();
+        this.fetchMyJobs();
+        // Optional: Show toast or alert
+      } else {
+        const err = await response.json();
+        alert(err.message || 'Failed to accept');
+      }
+    },
+
+    async rejectRequest(id) {
+      if (!confirm('Are you sure you want to cancel this job? It will be returned to the pool.')) return;
+      const response = await this.fetchWithAuth(`/api/prof/request/${id}/reject`, { method: 'POST' });
+      if (response && response.ok) {
+        this.fetchAvailableRequests();
+        this.fetchMyJobs();
+      }
+    },
+
+    async closeJob(id) {
+      if (!confirm('Mark job as completed? This action cannot be undone.')) return;
+      const response = await this.fetchWithAuth(`/api/prof/job/${id}/close`, { method: 'POST' });
+      if (response && response.ok) {
+        this.fetchMyJobs();
+      }
+    },
+
     formatDate(dateString) {
-      return new Date(dateString).toLocaleDateString();
+      if (!dateString) return '';
+      return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     },
-    getStatusColor(status) {
-      const statusColors = {
-        'Assigned': 'info',
-        'In Progress': 'primary',
-        'Completed': 'success',
-        'Cancelled': 'danger'
-      };
-      return statusColors[status] || 'secondary';
+
+    logout() {
+      localStorage.clear();
+      this.$router.push('/login');
     }
   }
-}
+};

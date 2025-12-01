@@ -1,6 +1,6 @@
 from flask import current_app as app, jsonify, request, render_template
 from flask_security import login_user, hash_password, verify_password, auth_required, logout_user
-from ..models import User, Customer, Professional
+from ..models import User, Customer, Professional, ServiceType
 from  ..extensions import db
 import re
 
@@ -9,6 +9,16 @@ datastore = app.security.datastore
 @app.route('/', methods = ['GET'])
 def home():
     return render_template('index.html')
+
+# --- Public Endpoint for Registration Form ---
+@app.route('/api/public/services', methods=['GET'])
+def get_public_services():
+    """Fetch services for the registration dropdown (no auth required)."""
+    services = ServiceType.query.all()
+    return jsonify([{
+        'id': s.id,
+        'name': s.name
+    } for s in services]), 200
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -27,6 +37,9 @@ def login():
             return jsonify({"message": "User not found"}), 404
         if not verify_password(password, user.password):
             return jsonify({"message": "Invalid credentials"}), 401
+        
+        if not user.active:
+            return jsonify({"message": "Account is blocked. Please contact admin."}), 403
         
         login_user(user)
         user_role = user.roles[0].name
@@ -131,10 +144,13 @@ def prof_register():
             return jsonify({"message": "Email already registered"}), 409
 
         else:
+            # Create user (Professionals are often inactive/unverified by default if admin approval is needed)
+            # You can set active=False here if you want them to wait for approval
             app.security.datastore.create_user(
                 email=email,
                 password=hash_password(password),
-                roles=['prof']
+                roles=['prof'],
+                active=True # Set to False if you want strictly Admin approval first
             )
             db.session.commit() 
             
@@ -145,7 +161,8 @@ def prof_register():
                 name=name,
                 phone=phone,
                 service_type=service_type,
-                experience=experience
+                experience=experience,
+                is_verified=False # Requires Admin Verification
             )
             db.session.add(professional_profile)
             db.session.commit()

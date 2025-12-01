@@ -23,9 +23,17 @@ export default {
             <div class="card border-primary shadow-lg p-3 p-md-4 bg-white rounded">
               <form @submit.prevent="addPro">
                 <h3 class="text-center mb-4">Service Professional Signup</h3>
-                <div v-if="errorMessage" class="alert alert-danger">
-                  {{ errorMessage }}
+                
+                <!-- Error Alert -->
+                <div v-if="errorMessage" class="alert alert-danger fade show" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
                 </div>
+
+                <!-- Success Flash Message -->
+                <div v-if="successMessage" class="alert alert-success fade show text-center" role="alert">
+                  <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+                </div>
+
                 <div class="row g-3">
                   <div class="col-12">
                     <label for="email" class="form-label">Email (username)</label>
@@ -82,9 +90,9 @@ export default {
                       v-model="formData.service_type"
                     >
                       <option disabled value="">Choose any</option>
-                      <option value="plumbing">Plumbing</option>
-                      <option value="electrical">Electrical</option>
-                      <option value="cleaning">Cleaning</option>
+                      <option v-for="service in services" :key="service.id" :value="service.name">
+                        {{ service.name }}
+                      </option>
                     </select>
                   </div>
                   <div class="col-12 col-md-6">
@@ -148,15 +156,37 @@ export default {
         phone: "",
         service_type: "",
       },
+      services: [],
       isLoading: false,
-      errorMessage: ""
+      errorMessage: "",
+      successMessage: "" 
     };
   },
+  mounted() {
+    this.fetchServiceTypes();
+  },
   methods: {
+    async fetchServiceTypes() {
+      try {
+        const response = await fetch('/api/public/services');
+        if (response.ok) {
+          this.services = await response.json();
+        } else {
+          console.error("Failed to fetch services");
+        }
+      } catch (err) {
+        console.error("Error fetching services", err);
+      }
+    },
     async addPro() {
+      // Prevent double submission if already loading
+      if (this.isLoading) return;
+
       try {
         this.errorMessage = "";
+        this.successMessage = "";
 
+        // Client-side Validation
         if (this.formData.password !== this.formData.password2) {
           this.errorMessage = "Passwords do not match";
           return;
@@ -201,23 +231,27 @@ export default {
           throw new Error(data.message || "Registration failed");
         }
 
-        if (data.auth_token) {
-          localStorage.setItem("auth_token", data.auth_token);
-          localStorage.setItem("user_id", data.user_id);
-          localStorage.setItem("user_role", "prof");
-        }
+        // Show success flash message
+        this.successMessage = "Registration successful! You will soon get a call for verification. Once verified, you will be able to login.";
+        
+        // Clear form
+        this.formData = {
+          email: "", password: "", password2: "", name: "", experience: 0, phone: "", service_type: ""
+        };
 
-        this.$router.push("/pro_dashboard");
+        // Redirect to Home after 3 seconds
+        setTimeout(() => {
+          this.$router.push("/");
+        }, 8000);
         
       } catch (error) {
         console.error("Registration error:", error);
         this.errorMessage = error.message || "Registration failed. Please try again.";
-        setTimeout(() => {
-          this.errorMessage = "";
-        }, 3000);
-      } finally {
+        // Reset loading state on error so user can try again
         this.isLoading = false;
       }
+      // Note: We don't set isLoading = false in 'finally' if successful, 
+      // to prevent user clicking while redirect is pending.
     }
   }
 };

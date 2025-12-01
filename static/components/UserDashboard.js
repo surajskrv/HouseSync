@@ -1,270 +1,362 @@
 export default {
   template: `
-    <div class="user-dashboard container-fluid vh-100 d-flex flex-column bg-light">
-    <link rel="stylesheet" href="../static/css/nav.css">
-      <nav class="navbar navbar-expand-lg navbar-dark nav-color fixed-top">
-        <div class="container">
-          <router-link class="navbar-brand d-flex align-items-center" to="/user">
-            <i class="bi bi-house-heart me-2 fs-4"></i>
-            <span class="fw-bold fs-4">HouseSync User</span>
-          </router-link>
-          <div class="d-flex align-items-center ms-auto">
-            <div class="d-flex align-items-center">
-              <div class="me-3">
-                <router-link to="/admin_search" class="btn btn-light">
-                  <i class="bi bi-search"></i>
-                  <span >Search</span>
-                </router-link>
-              </div>
-              <div class="me-3">
-                <router-link to="/admin_summary" class="btn btn-dark">
-                  <i class="bi bi-file-text"></i>
-                  <span>Summary</span>
-                </router-link>
-              </div>
-              <button class="btn btn-danger" @click="logout">
+  <div class="user-dashboard container-fluid min-vh-100 d-flex flex-column bg-light font-sans">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top shadow-sm border-bottom border-info-subtle">
+      <div class="container">
+        <router-link class="navbar-brand d-flex align-items-center gap-2" to="/user_dashboard">
+          <i class="bi bi-house-heart-fill fs-4 text-white"></i>
+          <span class="fw-bold fs-4 tracking-tight">User Portal</span>
+        </router-link>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="userNav">
+          <ul class="navbar-nav ms-auto align-items-center gap-3">
+            <li class="nav-item">
+              <router-link to="/user_dashboard" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/user_search" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-search me-1"></i> Search
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/user_summary" class="nav-link text-white" active-class="active fw-bold">
+                <i class="bi bi-person-circle me-1"></i> Profile
+              </router-link>
+            </li>
+            <li class="nav-item ms-lg-2">
+              <button class="btn btn-outline-light btn-sm rounded-pill px-4 fw-semibold" @click="logout">
                 <i class="bi bi-box-arrow-right me-1"></i> Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5 mt-5">
+      
+      <!-- Welcome Section -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm bg-white">
+            <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div>
+                <h4 class="fw-bold text-dark mb-1">Hello, {{ profile.name || 'User' }}!</h4>
+                <p class="text-muted mb-0">
+                  <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ profile.address }} - {{ profile.pincode }}
+                </p>
+              </div>
+              <button class="btn btn-primary rounded-pill shadow-sm px-4" @click="scrollToServices">
+                <i class="bi bi-plus-lg me-1"></i> New Request
               </button>
             </div>
           </div>
         </div>
-      </nav>
-  
-      <div class="container mt-5 pt-4">
-        <div class="card shadow-lg mb-4">
-          <div class="card-header bg-white">
-            <h5 class="mb-0">Available Services</h5>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div v-for="service in services" :key="service.id" class="col-md-4 mb-4">
-                <div class="card h-100">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ service.name }}</h5>
-                    <p class="card-text">{{ service.description }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="text-muted">{{ service.duration }} hours</span>
-                      <span class="fw-bold">{{ service.price }}</span>
+      </div>
+
+      <div class="row g-4">
+        
+        <!-- My Requests Column -->
+        <div class="col-lg-7">
+          <div class="card border-0 shadow h-100">
+            <div class="card-header bg-white border-0 p-4 sticky-top z-1">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+                  <div>
+                    <h5 class="fw-bold mb-0">My Requests</h5>
+                    <small class="text-muted">Track your service history</small>
+                  </div>
+                </div>
+                <span class="badge bg-secondary rounded-pill">{{ myRequests.length }} Total</span>
+              </div>
+            </div>
+            <div class="card-body p-0 overflow-auto custom-scrollbar" style="max-height: 600px;">
+              
+              <div v-if="myRequests.length === 0" class="p-5 text-center">
+                <i class="bi bi-clipboard-x fs-1 text-muted d-block mb-3"></i>
+                <h6 class="text-muted">No Requests Found</h6>
+                <p class="small text-muted">You haven't booked any services yet.</p>
+              </div>
+
+              <div v-else class="list-group list-group-flush">
+                <div v-for="req in myRequests" :key="req.id" class="list-group-item p-4 border-bottom hover-bg-light transition-all">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <h6 class="fw-bold text-dark mb-1">{{ req.service_name }}</h6>
+                      <small class="text-muted">{{ formatDate(req.date_of_request) }}</small>
+                    </div>
+                    <span class="badge rounded-pill text-uppercase" :class="getStatusClass(req.status)">
+                      {{ req.status }}
+                    </span>
+                  </div>
+
+                  <div v-if="req.professional_name" class="alert alert-light border small py-2 mb-3 d-flex align-items-center">
+                    <i class="bi bi-person-check-fill text-success me-2"></i>
+                    <div>
+                      <strong>{{ req.professional_name }}</strong> is assigned.
+                      <span v-if="req.professional_phone" class="text-muted ms-2"><i class="bi bi-telephone me-1"></i>{{ req.professional_phone }}</span>
                     </div>
                   </div>
-                  <div class="card-footer bg-white border-top-0">
-                    <button class="btn btn-primary w-100" @click="requestService(service.id)">
-                      <i class="bi bi-calendar-plus me-1"></i> Request Service
+                  <div v-else-if="req.status === 'requested'" class="alert alert-warning border small py-2 mb-3">
+                    <i class="bi bi-hourglass-split me-2"></i> Waiting for a professional...
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <!-- Actions for requested/assigned jobs -->
+                    <button v-if="['requested', 'assigned'].includes(req.status)" class="btn btn-outline-danger btn-sm rounded-pill" @click="cancelRequest(req.id)">
+                      Cancel
                     </button>
+                    
+                    <!-- Actions for completed jobs (Rating) -->
+                    <button v-if="req.status === 'closed'" class="btn btn-warning btn-sm rounded-pill text-dark" @click="openRatingModal(req)">
+                      Rate Service <i class="bi bi-star-fill ms-1"></i>
+                    </button>
+                    
+                    <!-- Completed with Rating -->
+                    <span v-if="req.status === 'completed' && req.rating" class="text-warning small">
+                      <i class="bi bi-star-fill"></i> {{ req.rating }}/5
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-  
-        <!-- My Requests Section -->
-        <div class="card shadow-lg mb-4">
-          <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">My Service Requests</h5>
-            <router-link to="/user/requests" class="btn btn-outline-primary">
-              View All Requests
-            </router-link>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>Request ID</th>
-                    <th>Service</th>
-                    <th>Professional</th>
-                    <th>Request Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="request in myRequests" :key="request.id">
-                    <td>{{ request.id }}</td>
-                    <td>{{ request.service }}</td>
-                    <td>{{ request.professional || 'Not assigned' }}</td>
-                    <td>{{ formatDate(request.date) }}</td>
-                    <td>
-                      <span :class="'badge bg-' + getStatusColor(request.status)">
-                        {{ request.status }}
-                      </span>
-                    </td>
-                    <td>
-                      <button class="btn btn-sm btn-outline-primary me-1" @click="viewRequest(request.id)">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                      <button 
-                        class="btn btn-sm btn-outline-danger" 
-                        @click="cancelRequest(request.id)"
-                        :disabled="request.status !== 'Pending'"
-                      >
-                        <i class="bi bi-x-circle"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+
+        <!-- Available Services Column -->
+        <div class="col-lg-5" id="services-section">
+          <div class="card border-0 shadow h-100">
+            <div class="card-header bg-white border-0 p-4 sticky-top z-1">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                  <i class="bi bi-grid-fill"></i>
+                </div>
+                <div>
+                  <h5 class="fw-bold mb-0">Book a Service</h5>
+                  <small class="text-muted">Choose from our experts</small>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-0 overflow-auto custom-scrollbar" style="max-height: 600px;">
+              <div class="list-group list-group-flush">
+                <div v-for="service in services" :key="service.id" class="list-group-item p-3 border-bottom hover-bg-light">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0">{{ service.name }}</h6>
+                    <span class="badge bg-light text-dark border">₹ {{ service.base_price }}</span>
+                  </div>
+                  <p class="text-muted small mb-3 text-truncate">{{ service.description }}</p>
+                  <button class="btn btn-outline-primary w-100 btn-sm rounded-pill fw-semibold" @click="openBookModal(service)">
+                    Book Now
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-  
-      <!-- Service Request Modal -->
-      <div class="modal fade" id="serviceRequestModal" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Request {{ selectedService?.name }}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+      </div>
+    </div>
+
+    <!-- Book Service Modal -->
+    <div class="modal fade" id="bookModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title fw-bold">Request {{ selectedService?.name }}</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4">
+            <form @submit.prevent="submitRequest">
+              <div class="mb-3">
+                <label class="form-label small text-muted fw-bold">PREFERRED DATE</label>
+                <input type="date" class="form-control" v-model="bookForm.date_of_request" required :min="new Date().toISOString().split('T')[0]">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted fw-bold">REMARKS / DETAILS</label>
+                <textarea class="form-control" v-model="bookForm.remarks" rows="3" placeholder="Describe the issue..."></textarea>
+              </div>
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2">Confirm Booking</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal fade" id="ratingModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title fw-bold">Rate Service</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4 text-center">
+            <p class="text-muted mb-4">How was your experience with <strong>{{ selectedRequest?.service_name }}</strong>?</p>
+            <div class="mb-4">
+              <div class="btn-group" role="group">
+                <button v-for="star in 5" :key="star" type="button" class="btn btn-outline-warning" 
+                        :class="{ 'active': ratingForm.rating >= star }" 
+                        @click="ratingForm.rating = star">
+                  <i class="bi bi-star-fill"></i>
+                </button>
+              </div>
             </div>
-            <div class="modal-body">
-              <form @submit.prevent="submitServiceRequest">
-                <div class="mb-3">
-                  <label class="form-label">Service Details</label>
-                  <textarea class="form-control" v-model="serviceRequest.details" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Preferred Date</label>
-                  <input type="date" class="form-control" v-model="serviceRequest.date" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Preferred Time</label>
-                  <input type="time" class="form-control" v-model="serviceRequest.time" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Address</label>
-                  <input type="text" class="form-control" v-model="serviceRequest.address" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Submit Request</button>
-              </form>
+            <div class="mb-3 text-start">
+              <label class="form-label small text-muted fw-bold">FEEDBACK (OPTIONAL)</label>
+              <textarea class="form-control" v-model="ratingForm.remarks" rows="2"></textarea>
+            </div>
+            <div class="d-grid mt-4">
+              <button type="button" class="btn btn-dark rounded-pill fw-bold" @click="submitRating" :disabled="!ratingForm.rating">
+                Submit Review
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    `,
+
+  </div>
+  `,
   data() {
     return {
-      services: [
-        {
-          id: 1,
-          name: "Plumbing Repair",
-          description:
-            "Fix leaks, install fixtures, and other plumbing services",
-          duration: 2,
-          price: 50,
-        },
-        {
-          id: 2,
-          name: "Electrical Work",
-          description: "Wiring, installations, and electrical repairs",
-          duration: 3,
-          price: 65,
-        },
-        {
-          id: 3,
-          name: "Home Cleaning",
-          description: "Thorough cleaning of your entire home",
-          duration: 4,
-          price: 80,
-        },
-      ],
-      myRequests: [
-        {
-          id: 1001,
-          service: "Plumbing Repair",
-          professional: "John Smith",
-          date: "2023-05-15",
-          status: "Completed",
-        },
-        {
-          id: 1002,
-          service: "Electrical Work",
-          professional: null,
-          date: "2023-05-18",
-          status: "Pending",
-        },
-      ],
-      recommendedPros: [
-        {
-          id: 101,
-          name: "John Smith",
-          serviceType: "Plumbing",
-          rating: 4.8,
-          reviews: 124,
-          experience: 5,
-        },
-        {
-          id: 102,
-          name: "Sarah Johnson",
-          serviceType: "Electrical",
-          rating: 4.9,
-          reviews: 89,
-          experience: 7,
-        },
-      ],
+      profile: {},
+      services: [],
+      myRequests: [],
       selectedService: null,
-      serviceRequest: {
-        details: "",
-        date: "",
-        time: "",
-        address: "",
-      },
+      selectedRequest: null,
+      bookForm: { date_of_request: '', remarks: '' },
+      ratingForm: { rating: 0, remarks: '' },
+      bookModal: null,
+      ratingModal: null
     };
   },
+  mounted() {
+    this.fetchProfile();
+    this.fetchServices();
+    this.fetchMyRequests();
+    this.bookModal = new bootstrap.Modal(document.getElementById('bookModal'));
+    this.ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
+  },
   methods: {
-    logout() {
-      this.$router.push("/login");
-    },
-    requestService(serviceId) {
-      this.selectedService = this.services.find((s) => s.id === serviceId);
-      this.serviceRequest = {
-        details: "",
-        date: "",
-        time: "",
-        address: "",
-      };
-      new bootstrap.Modal(
-        document.getElementById("serviceRequestModal")
-      ).show();
-    },
-    submitServiceRequest() {
-      const newId = Math.max(...this.myRequests.map((r) => r.id)) + 1;
-      this.myRequests.unshift({
-        id: newId,
-        service: this.selectedService.name,
-        professional: null,
-        date: new Date().toISOString().split("T")[0],
-        status: "Pending",
-      });
-      bootstrap.Modal.getInstance(
-        document.getElementById("serviceRequestModal")
-      ).hide();
-    },
-    viewRequest(requestId) {
-      this.$router.push(`/user/requests/${requestId}`);
-    },
-    cancelRequest(requestId) {
-      const request = this.myRequests.find((r) => r.id === requestId);
-      if (request) {
-        request.status = "Cancelled";
+    async fetchWithAuth(url, options = {}) {
+      try {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            "Auth-Token": localStorage.getItem("auth_token"),
+            ...options.headers
+          },
+        });
+        if (response.status === 401 || response.status === 403) {
+          this.logout();
+          return null;
+        }
+        return response;
+      } catch (err) {
+        console.error("Fetch error:", err);
+        return null;
       }
     },
-    viewProfessional(proId) {
-      this.$router.push(`/user/professionals/${proId}`);
+
+    async fetchProfile() {
+      const res = await this.fetchWithAuth('/api/user/profile');
+      if (res && res.ok) this.profile = await res.json();
     },
+
+    async fetchServices() {
+      const res = await this.fetchWithAuth('/api/user/services');
+      if (res && res.ok) this.services = await res.json();
+    },
+
+    async fetchMyRequests() {
+      const res = await this.fetchWithAuth('/api/user/requests');
+      if (res && res.ok) this.myRequests = await res.json();
+    },
+
+    openBookModal(service) {
+      this.selectedService = service;
+      this.bookForm = { date_of_request: new Date().toISOString().split('T')[0], remarks: '' };
+      this.bookModal.show();
+    },
+
+    async submitRequest() {
+      const payload = {
+        service_type_id: this.selectedService.id,
+        ...this.bookForm
+      };
+      const res = await this.fetchWithAuth('/api/user/request', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      if (res && res.ok) {
+        this.bookModal.hide();
+        this.fetchMyRequests();
+        alert('Service requested successfully!');
+      } else {
+        alert('Failed to request service.');
+      }
+    },
+
+    async cancelRequest(id) {
+      if (!confirm('Are you sure you want to cancel this request?')) return;
+      const res = await this.fetchWithAuth(`/api/user/request/${id}/cancel`, { method: 'POST' });
+      if (res && res.ok) {
+        this.fetchMyRequests();
+      }
+    },
+
+    openRatingModal(req) {
+      this.selectedRequest = req;
+      this.ratingForm = { rating: 0, remarks: '' };
+      this.ratingModal.show();
+    },
+
+    async submitRating() {
+      const res = await this.fetchWithAuth(`/api/user/request/${this.selectedRequest.id}/close`, {
+        method: 'POST',
+        body: JSON.stringify(this.ratingForm)
+      });
+      if (res && res.ok) {
+        this.ratingModal.hide();
+        this.fetchMyRequests();
+      }
+    },
+
+    scrollToServices() {
+      document.getElementById('services-section').scrollIntoView({ behavior: 'smooth' });
+    },
+
     formatDate(dateString) {
+      if (!dateString) return '';
       return new Date(dateString).toLocaleDateString();
     },
-    getStatusColor(status) {
-      const statusColors = {
-        Pending: "warning",
-        Assigned: "info",
-        "In Progress": "primary",
-        Completed: "success",
-        Cancelled: "danger",
-      };
-      return statusColors[status] || "secondary";
+
+    getStatusClass(status) {
+      switch(status) {
+        case 'requested': return 'bg-warning text-dark';
+        case 'assigned': return 'bg-info text-white';
+        case 'closed': return 'bg-success text-white'; // Closed by Pro, pending user review
+        case 'completed': return 'bg-success text-white'; // Fully done
+        case 'cancelled': return 'bg-danger text-white';
+        default: return 'bg-secondary text-white';
+      }
     },
-  },
+
+    logout() {
+      localStorage.clear();
+      this.$router.push('/login');
+    }
+  }
 };

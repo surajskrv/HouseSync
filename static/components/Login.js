@@ -118,7 +118,7 @@ export default {
           case 'prof':
             this.$router.push('/pro_dashboard');
             break;
-          case 'clint':
+          case 'client':
             this.$router.push('/user_dashboard');
             break;
           default:

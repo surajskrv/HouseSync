@@ -1,8 +1,6 @@
 export default {
   template: `
   <div class="w-100 p-0 overflow-hidden font-sans">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
     <style>
       /* Smooth scrolling for the whole page */
       html { scroll-behavior: smooth; }
