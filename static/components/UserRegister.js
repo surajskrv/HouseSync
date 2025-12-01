@@ -123,8 +123,10 @@ export default {
                         Processing...
                       </span>
                     </button>
-                    <router-link to="/login" class="btn btn-outline-primary flex-grow-1">Existing user?</router-link>
-                  </div>
+                    </div>
+                    <div class="col-12 mt-2 d-flex justify-content-center">
+                      <router-link to="/login" class="text-center flex-grow-1">Existing user?</router-link>
+                    </div>
                 </div>
               </form>
             </div>
@@ -200,7 +202,7 @@ export default {
         if (data.auth_token) {
           localStorage.setItem("auth_token", data.auth_token);
           localStorage.setItem("user_id", data.user_id);
-          localStorage.setItem("user_role", "user");
+          localStorage.setItem("user_role", "client");
         }
 
         this.$router.push("/user_dashboard");
@@ -208,6 +210,9 @@ export default {
       } catch (error) {
         this.errorMessage = error.message || "Registration failed. Please try again.";
         console.error("Registration error:", error);
+        setTimeout(() => {
+          this.errorMessage = "";
+        }, 3000);
       } finally {
         this.isLoading = false;
       }

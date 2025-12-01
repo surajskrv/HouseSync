@@ -24,6 +24,9 @@ export default {
             <div class="card border-primary shadow-lg p-3 p-md-4 bg-white rounded">
               <form @submit.prevent="loginUser">
                 <h3 class="text-center mb-4">Login</h3>
+                <div v-if="errorMessage" class="alert alert-danger">
+                  {{ errorMessage }}
+                </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Email (Username)</label>
                   <input
@@ -37,7 +40,7 @@ export default {
                     v-model="formData.email"
                   >
                 </div>
-                <div class="mb-3 position-relative">
+                <div class="mb-4 position-relative">
                   <label for="password" class="form-label">Password</label>
                   <input
                     id="password"
@@ -55,13 +58,17 @@ export default {
                 <div class="d-grid mb-3">
                   <button type="submit" class="btn btn-primary">Login</button>
                 </div>
-                <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
-                  <router-link to="./user_register" class="btn btn-outline-success flex-grow-1">
-                    Create Account
-                  </router-link>
-                  <router-link to="./pro_register" class="btn btn-outline-primary flex-grow-1">
+                <div class="d-grid mb-1 text-center">
+                  <p>Don't have an account? 
+                    <router-link to="./user_register" class="justify-content-center flex-grow-1">
+                    Customer Register
+                    </router-link>
+                  </p>
+                </div>
+                <div class="d-grid mt-0 text-center">
+                  <p>Are you a professional? <router-link to="./pro_register" class="justify-content-center flex-grow-1">
                     Professional Register
-                  </router-link>
+                  </router-link></p>
                 </div>
               </form>
             </div>
@@ -79,7 +86,8 @@ export default {
       },
       eyeClose: "./static/img/eye-close.png",
       eyeOpen: "./static/img/eye-open.png",
-      showPassword: false
+      showPassword: false,
+      errorMessage: "",
     };
   },
   methods: {
@@ -107,10 +115,10 @@ export default {
           case 'admin':
             this.$router.push('/admin_dashboard');
             break;
-          case 'pro':
+          case 'prof':
             this.$router.push('/pro_dashboard');
             break;
-          case 'user':
+          case 'clint':
             this.$router.push('/user_dashboard');
             break;
           default:
@@ -119,6 +127,9 @@ export default {
       } catch (error) { 
         console.error("Login error:", error);
         this.errorMessage = error.message || "Login failed. Please try again.";
+        setTimeout(() => {
+          this.errorMessage = "";
+        }, 3000);
       }
     },
     togglePass() {

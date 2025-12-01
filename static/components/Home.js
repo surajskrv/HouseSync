@@ -1,77 +1,111 @@
-
 export default {
   template: `
-  <div class="w-100 container-fluid p-0">
-    <link rel="stylesheet" href="../static/css/home.css">
-    <link rel="stylesheet" href="../static/css/nav.css">
-    <nav class="navbar navbar-expand-lg navbar-dark nav-color fixed-top">
+  <div class="w-100 p-0 overflow-hidden font-sans">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+      /* Smooth scrolling for the whole page */
+      html { scroll-behavior: smooth; }
+      
+      /* Subtle hover effect for cards */
+      .service-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+      .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; }
+      
+      /* Make images cover their area perfectly */
+      .object-fit-cover { object-fit: cover; }
+      
+      /* Minimal Navbar spacing */
+      .nav-link { font-weight: 500; font-size: 0.95rem; }
+    </style>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom py-3">
       <div class="container">
-        <router-link class="navbar-brand d-flex align-items-center" to="/">
-          <i class="bi bi-house-heart-fill me-2 fs-4"></i>
-          <span class="fw-bold fs-4" style="letter-spacing: 0.5px;">HouseSync</span>
+        <router-link class="navbar-brand d-flex align-items-center gap-2" to="/">
+          <i class="bi bi-house-heart-fill text-dark fs-4"></i>
+          <span class="fw-bold fs-4 tracking-tight text-dark">HouseSync</span>
         </router-link>
-        <div class="ms-auto">
-          <router-link to="/login" class="btn btn-outline-light px-4 rounded-pill">
-            <i class="bi bi-box-arrow-in-right me-2"></i>
-            <span class="d-none d-sm-inline">Login</span>
-          </router-link>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-4">
+            <li class="nav-item"><a class="nav-link text-secondary" href="#services">Services</a></li>
+            <li class="nav-item"><a class="nav-link text-secondary" href="#how-it-works">How it works</a></li>
+            <li class="nav-item"><a class="nav-link text-secondary" href="#testimonials">Reviews</a></li>
+            <li class="nav-item mt-3 mt-lg-0">
+              <router-link to="/login" class="btn btn-outline-dark rounded-pill px-4 btn-sm">
+                Log in
+              </router-link>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
 
-    <header class="hero-section text-white text-center">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col">
-            <h1 class="display-4 fw-bold mb-4">Home Services Made Simple</h1>
-            <p class="lead mb-4">Book trusted professionals for all your home needs in just a few clicks.</p>
-            <div class="d-flex justify-content-center align-items-center">
-              <router-link to="/user_register" class="btn btn-success btn-lg px-4">Get Started </router-link>
+    <header class="py-5 mt-5 bg-light">
+      <div class="container py-5">
+        <div class="row align-items-center gy-5">
+          <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-dark mb-4 ls-tight">
+              Home services, <br>
+              <span class="text-secondary">simplified.</span>
+            </h1>
+            <p class="lead text-secondary mb-5" style="max-width: 480px;">
+              Book trusted professionals for cleaning, repairs, and installations. Fast, secure, and hassle-free.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+              <router-link to="/user_register" class="btn btn-dark rounded-pill px-5 py-3 fw-semibold">
+                Book a Service
+              </router-link>
+              <router-link to="/pro_register" class="btn btn-link text-dark text-decoration-none px-4 py-3 fw-semibold">
+                Become a Pro <i class="bi bi-arrow-right ms-1"></i>
+              </router-link>
             </div>
+            
+            <div class="d-flex align-items-center gap-4 mt-5 pt-4 border-top border-secondary-subtle w-75">
+              <div>
+                <strong class="d-block fs-4 text-dark">4.8</strong>
+                <span class="text-muted small">Rating</span>
+              </div>
+               <div>
+                <strong class="d-block fs-4 text-dark">50k+</strong>
+                <span class="text-muted small">Bookings</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-6">
+            <img 
+              :src="heroImage" 
+              alt="Minimal interior" 
+              class="img-fluid rounded-4 shadow-sm object-fit-cover w-100" 
+              style="min-height: 400px; background-color: #e9ecef;"
+            >
           </div>
         </div>
       </div>
     </header>
 
-    <section class="stats-bar py-4 bg-light">
-      <div class="container">
-        <div class="row text-center">
-          <div class="col-md-3">
-            <h3 class="fw-bold text-primary">500+</h3>
-            <p class="mb-0">Happy Customers</p>
+    <section id="services" class="py-5 bg-white">
+      <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+          <div>
+            <h2 class="fw-bold mb-1">Our Services</h2>
+            <p class="text-secondary mb-0">Essentials for your home.</p>
           </div>
-          <div class="col-md-3">
-            <h3 class="fw-bold text-primary">50+</h3>
-            <p class="mb-0">Verified Professionals</p>
-          </div>
-          <div class="col-md-3">
-            <h3 class="fw-bold text-primary">24/7</h3>
-            <p class="mb-0">Customer Support</p>
-          </div>
-          <div class="col-md-3">
-            <h3 class="fw-bold text-primary">100%</h3>
-            <p class="mb-0">Satisfaction Guarantee</p>
-          </div>
+          <a href="#" class="text-dark fw-semibold text-decoration-none d-none d-md-block">View all <i class="bi bi-arrow-right"></i></a>
         </div>
-      </div>
-    </section>
 
-    <section id="services" class="py-5">
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="fw-bold">Our Services</h2>
-          <p class="text-muted">Quality home services at your convenience</p>
-        </div>
         <div class="row g-4">
-          <div v-for="service in services" :key="service.id" class="col-md-4">
-            <div class="card service-card h-100 border-0 shadow-sm">
-              <div class="card-body text-center p-4">
-                <div class="service-icon rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
-                  <i :class="service.icon" class="fs-3 text-primary"></i>
-                </div>
-                <h4 class="card-title">{{ service.name }}</h4>
-                <p class="card-text text-muted">{{ service.description }}</p>
+          <div v-for="service in services" :key="service.id" class="col-6 col-md-4">
+            <div class="card service-card h-100 border-0 bg-light rounded-4 p-3 p-md-4 text-center text-md-start">
+              <div class="mb-3 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm" style="width: 50px; height: 50px;">
+                <i :class="service.icon" class="fs-4 text-dark"></i>
               </div>
+              <h5 class="fw-bold mb-2">{{ service.name }}</h5>
+              <p class="text-secondary small mb-0 d-none d-md-block">{{ service.description }}</p>
             </div>
           </div>
         </div>
@@ -79,170 +113,154 @@ export default {
     </section>
 
     <section id="how-it-works" class="py-5 bg-light">
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="fw-bold">How It Works</h2>
-          <p class="text-muted">Get your home services in 3 easy steps</p>
-        </div>
-        <div class="row g-4">
+      <div class="container py-5 text-center">
+        <h2 class="fw-bold mb-5">How it works</h2>
+        <div class="row g-5">
           <div class="col-md-4">
-            <div class="step-card text-center p-4 bg-white rounded h-100">
-              <div class="step-number rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 text-white fw-bold fs-5">1</div>
-              <h4>Choose Your Service</h4>
-              <p class="text-muted">Select from our wide range of professional home services</p>
+            <div class="p-3">
+              <span class="display-6 fw-bold text-black-50 d-block mb-3">01</span>
+              <h4 class="fw-bold">Choose</h4>
+              <p class="text-secondary">Select your service and tailored requirements.</p>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="step-card text-center p-4 bg-white rounded h-100">
-              <div class="step-number rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 text-white fw-bold fs-5">2</div>
-              <h4>Book an Appointment</h4>
-              <p class="text-muted">Pick a date and time that works best for you</p>
+            <div class="p-3">
+              <span class="display-6 fw-bold text-black-50 d-block mb-3">02</span>
+              <h4 class="fw-bold">Schedule</h4>
+              <p class="text-secondary">Pick a time that fits your calendar.</p>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="step-card text-center p-4 bg-white rounded h-100">
-              <div class="step-number rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 text-white fw-bold fs-5">3</div>
-              <h4>Enjoy Your Service</h4>
-              <p class="text-muted">A verified professional will arrive at your scheduled time</p>
+            <div class="p-3">
+              <span class="display-6 fw-bold text-black-50 d-block mb-3">03</span>
+              <h4 class="fw-bold">Relax</h4>
+              <p class="text-secondary">We handle the rest with care.</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="testimonials" class="py-5">
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="fw-bold">What Our Customers Say</h2>
-          <p class="text-muted">Trusted by homeowners across the city</p>
-        </div>
-        <div class="row">
-          <div class="col-lg-8 mx-auto">
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+    <section id="testimonials" class="py-5 bg-white">
+      <div class="container py-5">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div id="testimonialCarousel" class="carousel slide text-center" data-bs-ride="carousel">
               <div class="carousel-inner">
-                <div v-for="(testimonial, index) in testimonials" :key="testimonial.id" 
-                     :class="['carousel-item', { 'active': index === 0 }]">
-                  <div class="testimonial-item bg-white p-4 rounded shadow-sm">
-                    <p class="fst-italic">"{{ testimonial.content }}"</p>
-                    <div class="testimonial-author d-flex align-items-center mt-4">
-                      <img :src="testimonial.avatar" :alt="testimonial.name" class="rounded-circle me-3">
-                      <div>
-                        <h5 class="mb-1">{{ testimonial.name }}</h5>
-                        <p class="text-muted mb-0">{{ testimonial.location }}</p>
+                <div v-for="(testimonial, index) in testimonials" :key="testimonial.id" :class="['carousel-item', { 'active': index === 0 }]">
+                  <div class="py-4">
+                    <i class="bi bi-quote fs-1 text-black-50"></i>
+                    <h3 class="fw-normal lh-base my-4 text-dark">"{{ testimonial.content }}"</h3>
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                      <img :src="testimonial.avatar" class="rounded-circle" width="48" height="48" alt="User">
+                      <div class="text-start">
+                        <h6 class="fw-bold mb-0 text-dark">{{ testimonial.name }}</h6>
+                        <small class="text-secondary">{{ testimonial.location }}</small>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+              <div class="mt-4">
+                <button class="btn btn-light rounded-circle mx-1" data-bs-target="#testimonialCarousel" data-bs-slide="prev"><i class="bi bi-arrow-left"></i></button>
+                <button class="btn btn-light rounded-circle mx-1" data-bs-target="#testimonialCarousel" data-bs-slide="next"><i class="bi bi-arrow-right"></i></button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="cta-section py-5 text-white">
-      <div class="container text-center">
-        <h2 class="mb-4">Ready to Transform Your Home?</h2>
-        <p class="lead mb-4">Join thousands of satisfied customers who trust HouseSync for their home service needs.</p>
-        <router-link class="btn btn-light btn-lg px-4">Get Started Today</router-link>
-      </div>
-    </section>
-
-    <footer class="footer py-5 bg-dark text-white">
+    <footer class="py-5 bg-white border-top">
       <div class="container">
-        <div class="row">
-          <div class="col-md-6 text-center text-md-start"> 
-          <p>Your trusted partner for all home service needs. Quality professionals at your fingertips.</p>
-        <p class="mb-0">&copy; 2025 HouseSync. All rights reserved.</p>
+        <div class="row gy-4 justify-content-between">
+          <div class="col-md-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-house-heart-fill text-dark fs-5"></i>
+              <span class="fw-bold fs-5">HouseSync</span>
+            </div>
+            <p class="text-secondary small">Making home maintenance effortless for everyone.</p>
           </div>
-          <div class="col-md-6 text-center text-md-end">
-            <ul class="list-inline mb-0">
-              <li class="list-inline-item"><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
-              <li class="list-inline-item"><a href="#" class="text-white-50 text-decoration-none">Terms of Service</a></li>
-            </ul>
+          <div class="col-md-6 text-md-end">
+            <div class="d-flex flex-column flex-md-row gap-md-4 gap-2 justify-content-md-end">
+              <a href="#" class="text-decoration-none text-secondary small">Privacy Policy</a>
+              <a href="#" class="text-decoration-none text-secondary small">Terms of Service</a>
+              <a href="#" class="text-decoration-none text-secondary small">Support</a>
+            </div>
+            <p class="text-muted small mt-3">&copy; 2025 HouseSync. All rights reserved.</p>
           </div>
         </div>
       </div>
     </footer>
-</div>
-`,
+  </div>
+  `,
   data() {
     return {
+      heroImage: "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&w=1200",
       services: [
         {
           id: 1,
           name: "Plumbing",
-          description:
-            "Expert plumbing solutions for leaks, installations, and repairs.",
-          icon: "bi bi-droplet",
+          description: "Leaks, installations, repairs.",
+          icon: "bi bi-droplet"
         },
         {
           id: 2,
           name: "Electrical",
-          description:
-            "Certified electricians for all your wiring and power needs.",
-          icon: "bi bi-lightning-charge",
+          description: "Wiring, power, safety.",
+          icon: "bi bi-lightning-charge"
         },
         {
           id: 3,
           name: "Cleaning",
-          description: "Professional cleaning services for spotless homes.",
-          icon: "bi bi-brush",
+          description: "Deep clean & sanitization.",
+          icon: "bi bi-stars"
         },
         {
           id: 4,
           name: "Carpentry",
-          description:
-            "Custom woodwork and furniture repairs by skilled carpenters.",
-          icon: "bi bi-hammer",
+          description: "Furniture & woodwork.",
+          icon: "bi bi-hammer"
         },
         {
           id: 5,
           name: "Painting",
-          description: "Interior and exterior painting for a fresh new look.",
-          icon: "bi bi-palette",
+          description: "Interior & exterior freshness.",
+          icon: "bi bi-palette"
         },
         {
           id: 6,
           name: "AC Repair",
-          description: "Cooling system maintenance and repair services.",
-          icon: "bi bi-snow",
-        },
+          description: "Cooling system experts.",
+          icon: "bi bi-snow"
+        }
       ],
       testimonials: [
         {
           id: 1,
-          name: "Sarah Johnson",
-          location: "Downtown Resident",
+          name: "Priya Sharma",
+          location: "Verified Customer, Mumbai",
           content:
-            "HouseSync saved me when my pipes burst on a weekend. The plumber arrived within an hour and fixed everything professionally.",
-          avatar: "https://randomuser.me/api/portraits/women/32.jpg",
+            "HouseSync saved me when my kitchen pipe burst. The plumber arrived within 45 minutes and was incredibly professional.",
+          avatar: "https://randomuser.me/api/portraits/women/44.jpg"
         },
         {
           id: 2,
-          name: "Michael Chen",
-          location: "Suburban Homeowner",
+          name: "Arjun Mehta",
+          location: "Verified Customer, Bangalore",
           content:
-            "I've used HouseSync for multiple services and each time the professionals have been punctual, skilled, and courteous.",
-          avatar: "https://randomuser.me/api/portraits/men/42.jpg",
+            "Clean interface, reliable professionals, and no hidden charges. Finally, an app that actually works as advertised.",
+          avatar: "https://randomuser.me/api/portraits/men/86.jpg"
         },
         {
           id: 3,
-          name: "Emily Rodriguez",
-          location: "Apartment Dweller",
+          name: "Sneha Kapoor",
+          location: "Verified Customer, Delhi NCR",
           content:
-            "The cleaning service transformed my apartment before my parents visited. Worth every penny!",
-          avatar: "https://randomuser.me/api/portraits/women/63.jpg",
-        },
-      ],
+            "The deep cleaning service was impeccable. I booked it for Diwali and my apartment looked brand new. Highly recommend!",
+          avatar: "https://randomuser.me/api/portraits/women/68.jpg"
+        }
+      ]
     };
-  },
+  }
 };

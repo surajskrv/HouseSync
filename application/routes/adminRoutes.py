@@ -1,21 +1,9 @@
 from flask import current_app as app, jsonify, request, render_template
 from flask_security import login_user, hash_password, verify_password, auth_required, logout_user, roles_required, current_user
 from  ..extensions import db
-from ..models import Customer, Professional
-
-datastore = app.security.datastore
+from ..models import Customer, Professional, ServiceType, User
 
 
-# ----------------  Admin  -----------------
-
-@app.route('/api/admin')
-@auth_required('token')
-@roles_required('admin')
-def admin_page():
-    return jsonify({
-        "message": "Admin login successful"
-    })
-    
 @app.route('/api/create_service', methods=['POST'])
 @roles_required('admin')
 @auth_required('token')
@@ -29,8 +17,6 @@ def create_service():
     db.session.add(service)
     db.session.commit()
     
-    log_admin_activity(current_user.id, 'create_service', service.id)
-    return jsonify(service.to_dict()), 201
 
 @app.route('/api/edit_services/<int:service_id>', methods=['PUT'])
 @roles_required('admin')
@@ -44,8 +30,7 @@ def edit_service(service_id):
     service.base_price = data.get('base_price', service.base_price)
     
     db.session.commit()
-    log_admin_activity(current_user.id, 'update_service', service.id)
-    return jsonify(service.to_dict())
+    return jsonify({"status": "success"})
 
 # admin/professionals.py
 @app.route('/professionals/<int:pro_id>/verify', methods=['POST'])
@@ -56,8 +41,7 @@ def verify_professional(pro_id):
     professional = Professional.query.get_or_404(pro_id)
     professional.is_verified = True
     db.session.commit()
-    
-    log_admin_activity(current_user.id, 'verify_professional', pro_id)
+
     return jsonify({"status": "verified"})
 
 # admin/users.py
@@ -70,7 +54,7 @@ def suspend_user(user_id):
     user.active = False
     db.session.commit()
     
-    log_admin_activity(current_user.id, 'suspend_user', user_id)
+
     return jsonify({"status": "suspended"})
     
 

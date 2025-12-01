@@ -1,37 +1,48 @@
-.nav-sec {
-  background: linear-gradient(135deg, #355ea9 0%, #2a5298 100%);
+.hero-section {
+  min-height: 100vh;
+  padding-top: 5rem;
+  background: radial-gradient(circle at top left, #198754 0, #0d6efd 35%, #020617 100%);
 }
 
-.hero-section {
-  background: linear-gradient(135deg, #355798 0%, #6e8dc3 100%);
-  padding: 100px 0 60px;
-}
-.service-card {
-  transition: transform 0.3s ease;
-}
-.service-card:hover {
-  transform: translateY(-10px);
-}
-.service-icon {
-  width: 70px;
-  height: 70px;
-  background: rgba(13, 110, 253, 0.1);
-}
-.step-number {
-  width: 50px;
-  height: 50px;
-  background: #0d6efd;
-}
-.testimonial-author img {
-  width: 50px;
-  height: 50px;
+.hero-section .object-fit-cover {
   object-fit: cover;
+  max-height: 420px;
 }
+
+.service-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 1rem;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.12);
+}
+
+.service-icon {
+  width: 64px;
+  height: 64px;
+  background: rgba(13, 110, 253, 0.06);
+}
+
+.step-card {
+  border-radius: 1rem;
+}
+
+.step-number {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0d6efd, #198754);
+}
+
+.testimonial-item {
+  border-radius: 1.25rem;
+}
+
 .cta-section {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background: linear-gradient(135deg, #0d6efd, #198754);
 }
-.social-links a {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.1);
+
+.footer {
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
