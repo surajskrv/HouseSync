@@ -1,3 +1,5 @@
+html { scroll-behavior: smooth; }
+.nav-link { font-weight: 500; font-size: 0.95rem; }
 .hero-section {
   min-height: 100vh;
   padding-top: 5rem;
@@ -15,7 +17,7 @@
 }
 
 .service-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
   box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.12);
 }
 
@@ -28,6 +30,8 @@
 .step-card {
   border-radius: 1rem;
 }
+
+.object-fit-cover { object-fit: cover; }
 
 .step-number {
   width: 44px;
@@ -46,3 +50,4 @@
 .footer {
   border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
+
