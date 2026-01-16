@@ -15,7 +15,7 @@ with app.app_context():
     if not app.security.datastore.find_user(email='admin@gmail.com'):
         app.security.datastore.create_user(
             email='admin@gmail.com', 
-            password=hash_password('helloworld'), 
+            password=hash_password('admin123'), 
             roles=['admin']
         )
     
@@ -61,4 +61,5 @@ with app.app_context():
             db.session.add(new_service)
         
     # Commit all changes (roles, admin, services)
+
     db.session.commit()
