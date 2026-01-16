@@ -1,20 +1,7 @@
 export default {
   template: `
   <div class="w-100 p-0 overflow-hidden font-sans">
-    <style>
-      /* Smooth scrolling for the whole page */
-      html { scroll-behavior: smooth; }
-      
-      /* Subtle hover effect for cards */
-      .service-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-      .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; }
-      
-      /* Make images cover their area perfectly */
-      .object-fit-cover { object-fit: cover; }
-      
-      /* Minimal Navbar spacing */
-      .nav-link { font-weight: 500; font-size: 0.95rem; }
-    </style>
+    <link rel="stylesheet" href="../static/css/home.css">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top border-bottom py-3">
       <div class="container">
@@ -261,4 +248,5 @@ export default {
       ]
     };
   }
+
 };
