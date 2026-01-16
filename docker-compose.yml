@@ -8,6 +8,12 @@ services:
       - "5000:5000"
     volumes:
       - ./instance:/app/instance
+    
+    # Add this to load your secrets from the .env file
+    env_file:
+      - .env
+
     environment:
-      - FLASK_ENV=production
+      # CHANGE THIS from 'production' to 'development'
+      - FLASK_ENV=development
       - TZ=Asia/Kolkata

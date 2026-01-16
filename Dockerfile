@@ -24,4 +24,5 @@ VOLUME ["/app/instance"]
 
 EXPOSE 5000
 
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "--access-logfile", "-"]
+# Use $PORT environment variable (required for Cloud Run)
+CMD gunicorn app:app -b 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile -
